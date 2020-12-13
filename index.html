@@ -1,61 +1,274 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
+    <meta name="title" content="Array Checker" />
+    <meta name="author" content="Vexcited" />
+    <title>Array Checker - Vexcited</title>
 
-        <meta name="title" content="Array Checker">
-        <meta name="author" content="Vexcited">
-        <title>Array Checker - Vexcited</title>
-        
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.0/css/bulma.min.css"/>
-        <link rel="shortcut icon" href="https://www.vexcited.ml/assets/images/light-icon.svg">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.0/css/bulma.min.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://www.vexcited.ml/assets/images/light-icon.svg"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
 
-        <style>
-          #return p {
-            word-break: break-all;
-          }
-        </style>
-    </head>
-    <body>
-        <section class="hero is-primary">
-          <div class="hero-body">
-            <div class="container">
-              <h1 class="title">
-                Array Checker
-              </h1>
-              <h2 class="subtitle">
-                Vérifie des arrays en fonction d'un modèle et de listes
-              </h2>
-            </div>
-          </div>
-        </section>
+    <link 
+      rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css"
+      integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw==" 
+      crossorigin="anonymous" 
+    />
 
-        <section class="section">
-          <h1 class="title">Modèles <button id="addTemplate" class="button is-primary is-outlined">Ajouter</button></h1>
-          <h2 class="subtitle">chaque valeur est séparée par une virugle.</h2>
+    <link 
+      rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/theme/nord.min.css" 
+      integrity="sha512-sPc4jmw78pt6HyMiyrEt3QgURcNRk091l3dZ9M309x4wM2QwnCI7bUtsLnnWXqwBMECE5YZTqV6qCDwmC2FMVA==" 
+      crossorigin="anonymous" 
+    />
 
-          <div id="templateGenerated"></div>
-        </section>
+    <style>
+      /* Resultats */
+      #return p {
+        word-break: break-all;
+      }
 
-        <section class="section">
-          <div class="field">
-            <label class="label" for="objectOfArraysInput">Toutes les listes à vérifier.</label>
-            <div class="control">
-              <textarea class="textarea is-primary" id="objectOfArraysInput" placeholder="exemple:
-1,2,3,4,5
-8,4,2,1,2"    ></textarea>
-            </div>
-            <p class="help is-dark">chaque valeur séparées par une virugle et chaque liste par un retour à la ligne</p>
-          </div>
+      /* Première section */
+      .is-nord-dark,
+      .is-nord-dark .title {
+        background-color: #2e3440;
+        color: #e5e9f0;
+      }
 
-          <div id="return"></div>
-        </section>
+      .is-nord-dark .subtitle {
+        color: #d8dee9;
+      }
 
-        
-        <script src="main.js"></script>
-    </body>
+      /* Navigation */
+      .nav {
+        background-color: #2e3440;
+      }
+
+      .nav a.nav-item:not(.button) {
+        color: #d8dee980;
+        transition: color 0.2s;
+      }
+
+      .nav a.nav-item:not(.button):hover {
+        color: #88c0d0;
+      }
+
+      .nav .button.is-primary.is-outlined {
+        color: #d8dee980;
+        border-color: #d8dee980;
+
+        transition: all 0.2s;
+      }
+
+      .nav .button.is-primary.is-outlined:hover,
+      .nav .button.is-primary.is-outlined:focus {
+        background-color: #88c0d0;
+        border-color: #88c0d0;
+        border-color: transparent;
+        -webkit-box-shadow: 0 0 0.5em #88c0d025;
+        box-shadow: 0 0 0.5em #88c0d025;
+        color: #2e3440;
+      }
+
+      .nav .nav-left a.nav-item {
+        transition: transform 0.5s;
+      }
+
+      .nav .nav-left a.nav-item:hover {
+        transform: rotate(90deg);
+      }
+
+      .nav .nav-left {
+        overflow: hidden;
+      }
+
+      /* Section Modèles */
+      .section .button.is-primary.is-outlined {
+        color: #88c0d0;
+        border-color: #88c0d0;
+
+        transition: all 0.2s;
+      }
+
+      .section .button.is-primary.is-outlined:hover,
+      .section .button.is-primary.is-outlined:focus {
+        -webkit-box-shadow: 0 0 0.5em #88c0d025;
+        box-shadow: 0 0 0.5em #88c0d025;
+        background-color: #88c0d0;
+        border-color: #88c0d0;
+        border-color: transparent;
+        color: #fff;
+      }
+
+      #templateGenerated {
+        -webkit-box-shadow: 0 0 0.5em #eceff4a1;
+        box-shadow: 0 0 0.5em #eceff4a1;
+        background-color: #eceff4;
+        border-radius: 3px;
+        transition: padding 0.2s;
+      }
+
+      #templateGenerated:empty {
+        padding: 0 1.5rem;
+      }
+
+      #templateGenerated input {
+        -webkit-box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0);
+        box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0);
+        transition: all 0.2s;
+        border-color: #434c5e50;
+      }
+
+      #templateGenerated input:hover,
+      #templateGenerated input:focus,
+      #templateGenerated input:active {
+        border-color: #434c5e;
+      }
+
+      #templateGenerated .button.is-static {
+        background-color: #434c5e;
+        border-color: #434c5e;
+        color: #eceff4;
+      }
+
+      #templateGenerated .field {
+        -webkit-box-shadow: 0 0 0.5em #2e344005;
+        box-shadow: 0 0 0.5em #2e344005;
+      }
+
+      /* TextArea */
+      .CodeMirror.cm-s-nord {
+        border-radius: 2px;
+        -webkit-box-shadow: 0 0 0.5em #2e344060;
+        box-shadow: 0 0 0.5em #2e344060;
+      }
+
+      .cm-s-nord .CodeMirror-linenumber {
+        color: #9da1a8cb;
+      }
+
+      .CodeMirror-placeholder.CodeMirror-line-like {
+        color: #9da1a885 !important;
+      }
+
+      /* Code */
+      code {
+        color: #2e3440;
+      }
+
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="container is-fluid">
+        <div class="nav-left">
+          <a class="nav-item">
+            <img
+              src="https://www.vexcited.ml/assets/images/light-icon.svg"
+              height="28px"
+              width="28px"
+            />
+          </a>
+        </div>
+
+        <div class="nav-right">
+          <a
+            href="https://github.com/Vexcited/"
+            target="_blank"
+            class="nav-item"
+          >
+            <span class="icon">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+
+          <span class="nav-item">
+            <a
+              href="https://www.vexcited.ml"
+              target="_blank"
+              class="button is-primary is-outlined"
+            >
+              <span>Autres projets</span>
+            </a>
+          </span>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero is-nord-dark">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            Array Checker
+          </h1>
+          <h2 class="subtitle">
+            Vérifie des listes en fonction de modèle(s)
+          </h2>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container">
+      <h1 class="title">
+        Modèle(s)
+      </h1>
+      <h2 class="subtitle">
+        chaque valeur est séparée d'une virugle
+        et chaque modèle d'un retour à la ligne.
+      </h2>
+      
+      <div class="field">
+        <div class="control">
+          <textarea class="textarea is-dark" id="arrayModelesInput" placeholder="exemple:
+1, 2, 3, 5, 6
+7, 3, 4, 9, 1"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <section class="section container">
+      <h1 class="title">Liste(s)</h1>
+      <h2 class="subtitle">
+        chaque valeur est séparée d'une virugle
+        et chaque liste d'un retour à la ligne.
+      </h2>
+
+      <div class="field">
+        <div class="control">
+          <textarea class="textarea is-dark" id="arrayListesInput" placeholder="exemple:
+1, 2, 3, 5, 6
+7, 3, 4, 9, 1"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section class="section container">
+      <h1 class="title">Résultats</h1>
+      <h2 class="subtitle">et filtres.</h2>
+
+      <div id="return"></div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js" integrity="sha512-zuvaVNiXwWY7U7HEdXsoTislTEElpKLELFoyQw0Bg7zfGhC4vG8eAhCxIQAvHmprW7dFhTq5zshUko4K3B4mSA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/display/placeholder.min.js" integrity="sha512-Q4yEMifBeStjSrSDyq+XrgpZHXpbyfR/E4jiZCXkqf66Gi9vvp7wdBlD86mlBzSFvBjkT+cafYMU3GdlvRZcOA==" crossorigin="anonymous"></script>
+    <script src="main.js"></script>
+  </body>
 </html>
-
