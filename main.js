@@ -125,9 +125,6 @@ function check (listes, modeles, filters) {
 function orderBySum (listes, modeles) {
     let output = ``;
 
-    
-
-
     // Pour chaque listes, récupérer les lignes
     for (const [listeArrayKey, listeArrayValues] of Object.entries(listes)) {
         let thisListCount = 0;
